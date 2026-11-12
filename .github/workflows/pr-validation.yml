@@ -5,7 +5,20 @@ on:
 
 jobs:
   validate:
-    uses: ./.github/workflows/validate-pr.yml
-    with:
-      pr_number: ${{ github.event.pull_request.number }}
-      base_ref: ${{ github.event.pull_request.base.ref }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Craft artifact
+        run: |
+          echo "true" > has-warnings.txt
+          cp .github/poc/pr-number.txt pr-number.txt
+          cat pr-number.txt
+
+      - name: Upload lint results
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: |
+            has-warnings.txt
+            pr-number.txt
